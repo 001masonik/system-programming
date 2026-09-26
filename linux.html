@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="GNU/Linux — операційна система. Коротка інформація, популярні дистрибутиви, команди CLI, BASH-скрипт авторизації та джерела інформації." />
+  <title>GNU/Linux — Операційна система | Системне програмування</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #07060b;
+      --bg-subtle: #0c0a12;
+      --surface: #100e19;
+      --surface2: #161324;
+      --surface3: #1d1930;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.12);
+      --green: #22c55e;
+      --green2: #4ade80;
+      --green3: #86efac;
+      --teal: #14b8a6;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --purple2: #c084fc;
+      --blue: #3b82f6;
+      --text: #f3f4f8;
+      --text2: #9b98b0;
+      --text3: #625d7a;
+      --code-bg: #0a0910;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      letter-spacing: -0.015em;
+    }
+
+    /* AMBIENT BACKGROUND */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(34, 197, 94, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 85%, rgba(20, 184, 166, 0.08) 0%, transparent 55%);
+    }
+
+    .ambient-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 75%);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+      background: rgba(7, 6, 11, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-brand:hover {
+      opacity: 0.95;
+    }
+
+    .brand-icon-wrap {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      position: relative;
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.35);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .nav-brand:hover .brand-icon-wrap {
+      transform: scale(1.08) rotate(-2deg);
+      box-shadow: 0 0 24px rgba(34, 197, 94, 0.6);
+    }
+
+    .brand-icon-svg {
+      display: block;
+      width: 30px;
+      height: 30px;
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f3f4f8;
+      line-height: 1.2;
+    }
+
+    .brand-gradient {
+      background: linear-gradient(135deg, #ffffff 10%, #4ade80 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a.active {
+      color: #fff;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    }
+
+    /* PROGRESS BAR */
+    .progress-bar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--teal));
+      z-index: 199;
+      transition: width 0.1s;
+      width: 0%;
+    }
+
+    /* SIDEBAR TOC */
+    .toc {
+      position: fixed;
+      top: 90px;
+      left: 1.5rem;
+      width: 190px;
+      z-index: 150;
+    }
+
+    .toc-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.8rem;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      margin-bottom: 0.3rem;
+    }
+
+    .toc-list a {
+      font-size: 0.78rem;
+      color: var(--text3);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .toc-list a:hover,
+    .toc-list a.active {
+      color: var(--green2);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .toc-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text3);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .toc-list a.active .toc-dot {
+      background: var(--green);
+    }
+
+    @media (max-width: 1200px) {
+      .toc {
+        display: none;
+      }
+    }
+
+    /* LAYOUT */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 100px 2rem 6rem;
+    }
+
+    /* HERO */
+    .page-hero {
+      padding: 3rem 0 3.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+
+    .page-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.22);
+      border-radius: 100px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--green2);
+      letter-spacing: 0.5px;
+      margin-bottom: 1.2rem;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 850;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #ffffff 0%, #4ade80 50%, #14b8a6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-hero-desc {
+      font-size: 1.05rem;
+      color: var(--text2);
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    .hero-meta-item svg {
+      opacity: 0.6;
+    }
+
+    /* SECTION */
+    .section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 90px;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--green);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.3), transparent);
+    }
+
+    .section h2 {
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 750;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+
+    .section p {
+      font-size: 0.96rem;
+      line-height: 1.8;
+      color: var(--text2);
+      margin-bottom: 1rem;
+    }
+
+    /* INFO CARD */
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .info-card:hover {
+      border-color: rgba(34, 197, 94, 0.2);
+      background: var(--surface2);
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      text-align: center;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(34, 197, 94, 0.25);
+      transform: translateY(-3px);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--green2), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text3);
+      margin-top: 0.3rem;
+    }
+
+    /* DISTRO GRID */
+    .distro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .distro-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.3rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: border-color 0.25s, transform 0.25s, background 0.25s;
+    }
+
+    .distro-card:hover {
+      border-color: rgba(34, 197, 94, 0.25);
+      background: var(--surface2);
+      transform: translateY(-2px);
+    }
+
+    .distro-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .distro-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .distro-desc {
+      font-size: 0.8rem;
+      color: var(--text3);
+      line-height: 1.5;
+    }
+
+    .distro-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.5rem;
+    }
+
+    .distro-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 100px;
+    }
+
+    /* CLI COMMANDS */
+    .cmd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    .cmd-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .cmd-item:hover {
+      border-color: rgba(34, 197, 94, 0.25);
+    }
+
+    .cmd-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.9rem 1.1rem;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cmd-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .cmd-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--green2);
+    }
+
+    .cmd-purpose {
+      font-size: 0.82rem;
+      color: var(--text3);
+    }
+
+    .cmd-body {
+      padding: 1rem 1.1rem;
+    }
+
+    .cmd-example {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .cmd-prompt {
+      color: var(--green);
+      user-select: none;
+    }
+
+    .cmd-output {
+      font-size: 0.8rem;
+      color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.4rem;
+      padding-left: 0.5rem;
+      line-height: 1.6;
+    }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .code-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red {
+      background: #ff5f56;
+    }
+
+    .code-dot.yellow {
+      background: #ffbd2e;
+    }
+
+    .code-dot.green {
+      background: #27c93f;
+    }
+
+    .code-copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.72rem;
+      color: var(--text3);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .code-copy-btn:hover {
+      color: var(--text);
+      border-color: var(--border2);
+    }
+
+    .code-content {
+      padding: 1.3rem 1.4rem;
+      overflow-x: auto;
+    }
+
+    .code-content pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      white-space: pre;
+    }
+
+    /* Syntax colours */
+    .sh-comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .sh-keyword {
+      color: #c084fc;
+    }
+
+    .sh-string {
+      color: #4ade80;
+    }
+
+    .sh-var {
+      color: #60a5fa;
+    }
+
+    .sh-builtin {
+      color: #fb923c;
+    }
+
+    .sh-number {
+      color: #fbbf24;
+    }
+
+    /* TERMINAL SIMULATION */
+    .terminal-sim {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .terminal-bar {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .t-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .t-dot.r {
+      background: #ff5f56;
+    }
+
+    .t-dot.y {
+      background: #ffbd2e;
+    }
+
+    .t-dot.g {
+      background: #27c93f;
+    }
+
+    .terminal-title {
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 0.74rem;
+      color: #8b949e;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .terminal-body {
+      padding: 1.2rem 1.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.9;
+    }
+
+    .t-prompt {
+      color: #22c55e;
+    }
+
+    .t-cmd {
+      color: #e2e8f0;
+    }
+
+    .t-out {
+      color: #8b949e;
+    }
+
+    .t-err {
+      color: #f85149;
+    }
+
+    .t-info {
+      color: #58a6ff;
+    }
+
+    .t-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: #22c55e;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* SOURCES */
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.9rem;
+      margin-top: 1.5rem;
+    }
+
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      text-decoration: none;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      transition: border-color 0.25s, transform 0.25s, background 0.25s;
+    }
+
+    .source-card:hover {
+      border-color: rgba(34, 197, 94, 0.25);
+      background: var(--surface2);
+      transform: translateY(-2px);
+    }
+
+    .source-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .source-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .source-url {
+      font-size: 0.73rem;
+      color: var(--green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: rgba(34, 197, 94, 0.06);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      gap: 0.75rem;
+      margin: 1.2rem 0;
+    }
+
+    .callout-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .callout p {
+      font-size: 0.88rem;
+      color: var(--text2);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3rem 0;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text3);
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    /* INLINE CODE */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84em;
+      background: rgba(34, 197, 94, 0.08);
+      color: var(--green2);
+      padding: 0.15em 0.45em;
+      border-radius: 5px;
+      border: 1px solid rgba(34, 197, 94, 0.12);
+    }
+
+    /* TAG pills */
+    .tag-beginner {
+      background: rgba(34, 197, 94, 0.12);
+      color: var(--green2);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .tag-server {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .tag-desktop {
+      background: rgba(168, 85, 247, 0.12);
+      color: var(--purple2);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    .tag-rolling {
+      background: rgba(234, 179, 8, 0.12);
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+
+    .tag-privacy {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .tag-minimal {
+      background: rgba(20, 184, 166, 0.12);
+      color: #5eead4;
+      border: 1px solid rgba(20, 184, 166, 0.2);
+    }
+
+    .tag-security {
+      background: rgba(249, 115, 22, 0.12);
+      color: #fdba74;
+      border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 1rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .page-wrap {
+        padding: 85px 1rem 4rem;
+      }
+
+      .distro-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sources-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient-bg"></div>
+  <div class="ambient-grid"></div>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon-wrap">
+        <svg class="brand-icon-svg" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#22c55e" />
+              <stop offset="100%" stop-color="#14b8a6" />
+            </linearGradient>
+          </defs>
+          <rect width="30" height="30" rx="9" fill="url(#ng)" />
+          <rect x="1" y="1" width="28" height="28" rx="8" fill="none" stroke="rgba(255,255,255,0.25)"
+            stroke-width="1.2" />
+          <text x="15" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13"
+            font-weight="700" fill="white">λ</text>
+        </svg>
+      </span>
+      <span class="brand-title"><span class="brand-gradient">SP</span> · Linux</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Головна</a>
+      <a href="git.html">Git</a>
+      <a href="linux.html" class="active">Linux</a>
+    </div>
+  </nav>
+
+  <!-- TOC -->
+  <aside class="toc" id="toc">
+    <div class="toc-title">Зміст</div>
+    <ul class="toc-list">
+      <li><a href="#about" id="toc-about"><span class="toc-dot"></span>Про GNU/Linux</a></li>
+      <li><a href="#distros" id="toc-distros"><span class="toc-dot"></span>Дистрибутиви</a></li>
+      <li><a href="#cli" id="toc-cli"><span class="toc-dot"></span>Команди CLI</a></li>
+      <li><a href="#bash-script" id="toc-bash-script"><span class="toc-dot"></span>BASH-скрипт</a></li>
+      <li><a href="#sources" id="toc-sources"><span class="toc-dot"></span>Джерела</a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="page-wrap">
+
+    <!-- HERO -->
+    <header class="page-hero">
+      <div class="page-hero-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        Системне програмування · Тема: GNU/Linux
+      </div>
+      <h1><span class="hero-gradient">Операційна система GNU/Linux</span></h1>
+      <p class="page-hero-desc">
+        Вільна, відкрита та наднадійна операційна система, що живить увесь сучасний світ:
+        від серверів, хмарних платформ і суперкомп'ютерів до мобільних пристроїв та систем безпеки.
+      </p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Вільне ПЗ (GNU GPL)
+        </span>
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          Ядро Linux (kernel.org)
+        </span>
+        <span class="hero-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path
+              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          1991 — Лінус Торвальдс
+        </span>
+      </div>
+    </header>
+
+    <!-- SECTION 1: ABOUT -->
+    <section class="section" id="about">
+      <div class="section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        Коротка інформація
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Що таке GNU/Linux?</h2>
+
+      <p>
+        <strong>GNU/Linux</strong> — це повнофункціональна Unix-подібна операційна система з відкритим вихідним кодом.
+        Вона складається з двох фундаментальних компонентів:
+      </p>
+      <ul style="color:var(--text2);margin-left:1.5rem;margin-bottom:1.2rem;line-height:1.8;font-size:0.95rem;">
+        <li><strong>Ядро Linux (Linux Kernel)</strong> — створене фінським студентом Лінусом Торвальдсом у 1991 році. Ядро безпосередньо керує процесором, оперативною пам'яттю, файловими системами та пристроями введення-виведення.</li>
+        <li><strong>Утиліти та середовище GNU</strong> — створені проектом Річарда Столлмана (Free Software Foundation) з 1983 року: компілятор GCC, базова бібліотека C (glibc), командний інтерпретатор Bash, утиліти Coreutils тощо.</li>
+      </ul>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">топ-500 суперкомп'ютерів світу</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">90%+</div>
+          <div class="stat-label">хмарної інфраструктури (AWS/GCP/Azure)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">&gt;600</div>
+          <div class="stat-label">активних дистрибутивів</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">33+</div>
+          <div class="stat-label">роки безперервного розвитку</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <p style="margin:0; font-size:0.92rem;">
+          <strong style="color:var(--green2);">Ключові архітектурні переваги:</strong><br />
+          • <strong>Багатозадачність і багатокористувацький режим:</strong> одночасне виконання сотень ізольованих процесів кількома користувачами.<br />
+          • <strong>Розмежування прав та безпека:</strong> сувора POSIX-модель прав (rwx), механізми DAC/MAC (AppArmor, SELinux) та namespaces.<br />
+          • <strong>Принцип «Все є файлом» (Everything is a file):</strong> уніфікований доступ до пристроїв (/dev), інформації про процеси (/proc) та системних налаштувань (/sys).<br />
+          • <strong>Гнучкість та кастомізація:</strong> можливість заміни будь-якого компонента (ядра, шелла, графічної оболонки, менеджера пакетів).
+        </p>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        <p>
+          Сьогодні Linux використовується скрізь: на смартфонах під керуванням Android, у марсоходах NASA Perseverance,
+          у серверах веб-сервісів Google, Meta та Cloudflare, а також у бортових комп'ютерах сучасних автомобілів.
+        </p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 2: DISTROS -->
+    <section class="section" id="distros">
+      <div class="section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>
+        Дистрибутиви
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Найбільш популярні дистрибутиви Linux</h2>
+      <p>
+        <strong>Дистрибутив Linux</strong> — це операційна система, зібрана на базі ядра Linux, системних утиліт GNU,
+        пакетного менеджера та набору програмного забезпечення під конкретні задачі (робоча станція, сервер, безпека, контейнери).
+      </p>
+
+      <div class="distro-grid">
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(234,102,34,0.12)">🟠</div>
+          <div>
+            <div class="distro-name">Ubuntu</div>
+            <div class="distro-desc">Найвідоміший дистрибутив від компанії Canonical на базі Debian. Величезна спільнота, підтримка PPA та Snap.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-beginner">Початківцям</span>
+              <span class="distro-tag tag-server">Сервери</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APT / DPKG</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(73,110,255,0.12)">🔵</div>
+          <div>
+            <div class="distro-name">Debian</div>
+            <div class="distro-desc">«Універсальна операційна система». Легендарна стабільність, сувора політика вільного ПЗ, понад 59 000 пакетів.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-server">Сервери</span>
+              <span class="distro-tag tag-minimal">Стабільність</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(30,175,81,0.12)">🟢</div>
+          <div>
+            <div class="distro-name">Linux Mint</div>
+            <div class="distro-desc">Ідеальний дистрибутив для користувачів, які переходять з Windows. Зручне оточення Cinnamon і готовність «з коробки».</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-beginner">Десктоп</span>
+              <span class="distro-tag tag-beginner">Для дому</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(26,115,232,0.12)">💙</div>
+          <div>
+            <div class="distro-name">Fedora</div>
+            <div class="distro-desc">Інноваційний дистрибутив від Red Hat. Завжди свіжі версії ядра, GNOME та Wayland. Полігон для корпоративного RHEL.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-desktop">Розробникам</span>
+              <span class="distro-tag tag-rolling">Свіжий софт</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">DNF / RPM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(170,0,0,0.12)">❤️</div>
+          <div>
+            <div class="distro-name">RHEL / Rocky / AlmaLinux</div>
+            <div class="distro-desc">Корпоративний стандарт Red Hat Enterprise Linux та його безкоштовні бінарно-сумісні форки для продакшн-серверів.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-server">Enterprise</span>
+              <span class="distro-tag tag-server">10 років підтримки</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">DNF / RPM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(23,162,184,0.12)">🔷</div>
+          <div>
+            <div class="distro-name">Arch Linux</div>
+            <div class="distro-desc">Мінімалістичний дистрибутив за принципом KISS (Keep It Simple, Stupid). Rolling-release, репозиторій AUR і найкраща Wiki.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-rolling">Rolling-Release</span>
+              <span class="distro-tag tag-minimal">AUR</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">Pacman</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(80,80,80,0.12)">🐉</div>
+          <div>
+            <div class="distro-name">Kali Linux</div>
+            <div class="distro-desc">Дистрибутив для тестування на проникнення (пентест) та аудиту безпеки від Offensive Security. 600+ вбудованих утиліт.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-security">Cybersecurity</span>
+              <span class="distro-tag tag-security">Пентест</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(83,53,236,0.12)">🦎</div>
+          <div>
+            <div class="distro-name">openSUSE (Leap / Tumbleweed)</div>
+            <div class="distro-desc">Потужний німецький дистрибутив із центром керування YaST, автоматичними знімками системи Snapper на Btrfs.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-server">YaST</span>
+              <span class="distro-tag tag-desktop">Btrfs</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">Zypper / RPM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(34,197,94,0.12)">🤖</div>
+          <div>
+            <div class="distro-name">Pop!_OS</div>
+            <div class="distro-desc">Розроблений System76 на базі Ubuntu. Відмінна підтримка дискретних відеокарт NVIDIA/AMD, тайлінг вікон COSMIC.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-desktop">Розробка</span>
+              <span class="distro-tag tag-beginner">Геймінг</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APT / Flatpak</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(239,68,68,0.12)">🧅</div>
+          <div>
+            <div class="distro-name">Tails</div>
+            <div class="distro-desc">Операційна система для абсолютної анонімності. Завантажується з флешки в RAM, весь інтернет-трафік спрямовує через мережу Tor.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-privacy">Приватність</span>
+              <span class="distro-tag tag-privacy">Tor Network</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">Live USB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(20,184,166,0.12)">🏔️</div>
+          <div>
+            <div class="distro-name">Alpine Linux</div>
+            <div class="distro-desc">Ультралегкий дистрибутив розміром усього ~5 МБ. Побудований на musl libc та BusyBox. Де-факто стандарт для Docker-контейнерів.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-minimal">Контейнери</span>
+              <span class="distro-tag tag-minimal">Docker</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">APK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distro-card">
+          <div class="distro-icon" style="background:rgba(168,85,247,0.12)">🦅</div>
+          <div>
+            <div class="distro-name">Manjaro</div>
+            <div class="distro-desc">Дружній до користувача дистрибутив на базі Arch Linux із графічним установником, власними репозиторіями та стабілізацією оновлень.</div>
+            <div class="distro-tags">
+              <span class="distro-tag tag-rolling">Rolling</span>
+              <span class="distro-tag tag-desktop">Десктоп</span>
+              <span class="distro-tag" style="background:rgba(255,255,255,0.06);color:var(--text2)">Pamac / Pacman</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 3: CLI COMMANDS -->
+    <section class="section" id="cli">
+      <div class="section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="4 17 10 11 4 5" />
+          <line x1="12" y1="19" x2="20" y2="19" />
+        </svg>
+        Командний рядок
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Приклади команд роботи в Linux CLI</h2>
+      <p>
+        Інтерфейс командного рядка (CLI) — серце адміністрування Linux. Нижче наведено детальні приклади роботи
+        з 10 обов'язковими командами файлової системи та навігації.
+      </p>
+
+      <div class="cmd-list">
+
+        <!-- 1. pwd -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">1. pwd</div>
+              <div class="cmd-purpose">(Print Working Directory) — показати поточну директорію</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>pwd</span>
+            </div>
+            <div class="cmd-output">/home/user/projects/sp-course</div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Виводить абсолютний шлях від кореня <code>/</code> до каталогу, в якому зараз перебуває сеанс терміналу.
+              Прапор <code>-P</code> розкриває символічні посилання до фізичного шляху.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. echo -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">2. echo</div>
+              <div class="cmd-purpose">— вивести рядок тексту або значення змінної</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>echo "Ласкаво просимо до GNU/Linux!"</span>
+            </div>
+            <div class="cmd-output">Ласкаво просимо до GNU/Linux!</div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>echo -e "Користувач: $USER\nШелл: $SHELL\nДомашній каталог: $HOME"</span>
+            </div>
+            <div class="cmd-output">Користувач: user<br />Шелл: /bin/bash<br />Домашній каталог: /home/user</div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Прапор <code>-e</code> активує інтерпретацію спецсимволів escape (<code>\n</code> — новий рядок, <code>\t</code> — табуляція).
+              Прапор <code>-n</code> вимикає перенесення на новий рядок у кінці.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. ls -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">3. ls</div>
+              <div class="cmd-purpose">(List) — переглянути вміст каталогу</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>ls -lah</span>
+            </div>
+            <div class="cmd-output">
+              total 48K<br />
+              drwxr-xr-x 4 user user 4.0K Sep 26 13:00 .<br />
+              drwxr-xr-x 3 root root 4.0K Sep 20 09:12 ..<br />
+              -rw-r--r-- 1 user user  220 Sep 20 09:12 .bash_logout<br />
+              -rw-r--r-- 1 user user 3.7K Sep 20 09:12 .bashrc<br />
+              drwxr-xr-x 3 user user 4.0K Sep 26 12:45 projects<br />
+              -rw-r--r-- 1 user user 1.2K Sep 26 13:00 notes.txt
+            </div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Найчастіші прапори: <code>-l</code> (довгий формат з правами доступу, власником та розміром),
+              <code>-a</code> (всі файли, включаючи приховані, що починаються з крапки), <code>-h</code> (human-readable розміри: K, M, G).
+            </p>
+          </div>
+        </div>
+
+        <!-- 4. cd -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">4. cd</div>
+              <div class="cmd-purpose">(Change Directory) — перейти в інший каталог</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>cd /var/log && pwd</span>
+            </div>
+            <div class="cmd-output">/var/log</div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:/var/log$</span>
+              <span>cd ..      # піднятися на 1 рівень угору (у /var)</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:/var$</span>
+              <span>cd ~       # повернутися в домашній каталог (/home/user)</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>cd -       # повернутися до попередньої робочої директорії</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. touch -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">5. touch</div>
+              <div class="cmd-purpose">— створити порожній файл або оновити дату модифікації</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>touch config.yaml server.js .env</span>
+            </div>
+            <div class="cmd-output"># Створює файли config.yaml, server.js та прихований .env нульового розміру</div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>touch -d "2026-01-01 12:00:00" old_file.txt</span>
+            </div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Якщо вказаний файл вже існує, команда не перезаписує його вміст, а лише оновлює мітки часу <em>atime</em> та <em>mtime</em>.
+            </p>
+          </div>
+        </div>
+
+        <!-- 6. mkdir -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">6. mkdir</div>
+              <div class="cmd-purpose">(Make Directory) — створити новий каталог</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mkdir my-app</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mkdir -p backend/src/controllers/api  # створення всього ланцюжка каталогів</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mkdir -m 700 secure_vault            # створення з правами доступу тільки для власника</span>
+            </div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Ключ <code>-p</code> (parents) запобігає помилкам, якщо батьківські каталоги ще не створені,
+              і не видає помилку, якщо папка вже існує.
+            </p>
+          </div>
+        </div>
+
+        <!-- 7. cp -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">7. cp</div>
+              <div class="cmd-purpose">(Copy) — копіювати файли або цілі директорії</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>cp config.example.env .env</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>cp -r src/ dist/backup_src/    # рекурсивне копіювання каталогу</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>cp -i main.c main_old.c       # інтерактивний режим із запитом перед перезаписом</span>
+            </div>
+            <p style="font-size:0.83rem;color:var(--text3);margin-top:0.5rem;">
+              Прапор <code>-a</code> (archive) зберігає атрибути файлів, права, власників, часові мітки та симлінки (ідеально для бекапів).
+            </p>
+          </div>
+        </div>
+
+        <!-- 8. mv -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">8. mv</div>
+              <div class="cmd-purpose">(Move) — перемістити або перейменувати файл/папку</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mv script.sh run_daemon.sh      # перейменування файлу</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mv *.log /var/log/archive/       # переміщення всіх .log файлів у каталог</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>mv -n draft.txt published.txt   # прапор -n (no-clobber) не перезаписує існуючий файл</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. rm -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">9. rm</div>
+              <div class="cmd-purpose">(Remove) — видалити файли або директорії</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>rm temp.txt debug.log</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>rm -rf node_modules/ build/      # рекурсивно і примусово видалити папки</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>rm -i *.conf                    # запитувати підтвердження для кожного файлу</span>
+            </div>
+            <div class="callout" style="margin-top:0.8rem">
+              <span class="callout-icon">⚠️</span>
+              <p>
+                <strong>Критична пересторога:</strong> У Linux немає «Кошика» для терміналу.
+                Команда <code>rm -rf</code> видаляє назавжди без можливості штатного відновлення.
+                Ніколи не запускайте <code>sudo rm -rf /</code>!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. history -->
+        <div class="cmd-item">
+          <div class="cmd-header">
+            <div class="cmd-header-left">
+              <div class="cmd-name">10. history</div>
+              <div class="cmd-purpose">— переглянути історію введених команд</div>
+            </div>
+          </div>
+          <div class="cmd-body">
+            <div class="cmd-example">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>history | tail -n 5</span>
+            </div>
+            <div class="cmd-output">
+              &nbsp;1021&nbsp; ls -lah<br />
+              &nbsp;1022&nbsp; mkdir -p src/utils<br />
+              &nbsp;1023&nbsp; touch src/utils/math.c<br />
+              &nbsp;1024&nbsp; gcc -Wall src/utils/math.c -o app<br />
+              &nbsp;1025&nbsp; history | tail -n 5
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>!1024       # повторити команду номер 1024</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>!!          # повторити останню команду</span>
+            </div>
+            <div class="cmd-example" style="margin-top:0.4rem;">
+              <span class="cmd-prompt">user@linux:~$</span>
+              <span>history -c  # очистити історію поточного сеансу</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TERMINAL SIMULATION CLI DEMO -->
+      <div class="terminal-sim">
+        <div class="terminal-bar">
+          <span class="t-dot r"></span>
+          <span class="t-dot y"></span>
+          <span class="t-dot g"></span>
+          <span class="terminal-title">user@ubuntu: ~/demo-session</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-prompt">user@ubuntu:~$</span> <span class="t-cmd">pwd</span></div>
+          <div><span class="t-out">/home/user</span></div>
+          <div><span class="t-prompt">user@ubuntu:~$</span> <span class="t-cmd">mkdir -p demo-lab/{src,docs,tests} && cd demo-lab</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">touch src/main.sh docs/README.md tests/test1.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">echo '#!/usr/bin/env bash' &gt; src/main.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">echo 'echo "Hello from Linux CLI!"' &gt;&gt; src/main.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">ls -lah src/</span></div>
+          <div><span class="t-out">total 12K</span></div>
+          <div><span class="t-out">drwxr-xr-x 2 user user 4.0K Sep 26 13:20 .</span></div>
+          <div><span class="t-out">drwxr-xr-x 5 user user 4.0K Sep 26 13:19 ..</span></div>
+          <div><span class="t-out">-rw-r--r-- 1 user user   55 Sep 26 13:20 main.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">cp src/main.sh src/main_backup.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">mv src/main_backup.sh docs/example.sh</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cmd">history | tail -n 5</span></div>
+          <div><span class="t-out">  1  mkdir -p demo-lab/{src,docs,tests} && cd demo-lab</span></div>
+          <div><span class="t-out">  2  touch src/main.sh docs/README.md tests/test1.sh</span></div>
+          <div><span class="t-out">  3  echo 'echo "Hello from Linux CLI!"' &gt;&gt; src/main.sh</span></div>
+          <div><span class="t-out">  4  mv src/main_backup.sh docs/example.sh</span></div>
+          <div><span class="t-out">  5  history | tail -n 5</span></div>
+          <div><span class="t-prompt">user@ubuntu:~/demo-lab$</span> <span class="t-cursor"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 4: BASH SCRIPT -->
+    <section class="section" id="bash-script">
+      <div class="section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="4 17 10 11 4 5" />
+          <line x1="12" y1="19" x2="20" y2="19" />
+        </svg>
+        Автоматизація в BASH
+        <div class="section-label-line"></div>
+      </div>
+      <h2>BASH-скрипт: Імітація текстової авторизації в системі</h2>
+      <p>
+        Скрипт демонструє класичний механізм входу до Linux у консольному режимі (TTY/SSH).
+        Реалізовано: кольорове оформлення ANSI, ASCII-логотип системи, приховане введення пароля (<code>read -s</code>),
+        лічильник невдалих спроб, блокування облікового запису на таймер та інтерактивну оболонку після входу.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+          </div>
+          <div class="code-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+            login_simulation.sh
+          </div>
+          <button class="code-copy-btn" id="copyBtn" onclick="copyScript()">Копіювати код</button>
+        </div>
+        <div class="code-content">
+          <pre id="scriptContent"><span class="sh-comment">#!/usr/bin/env bash</span>
+<span class="sh-comment"># ==============================================================================</span>
+<span class="sh-comment">#  login_simulation.sh — Імітація текстової консольної авторизації в GNU/Linux</span>
+<span class="sh-comment">#  Курс: Системне програмування</span>
+<span class="sh-comment"># ==============================================================================</span>
+
+<span class="sh-comment"># --- Налаштування кольорів ANSI ---</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">RED</span>=<span class="sh-string">'\033[0;31m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">GREEN</span>=<span class="sh-string">'\033[0;32m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">YELLOW</span>=<span class="sh-string">'\033[1;33m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">CYAN</span>=<span class="sh-string">'\033[0;36m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">BOLD</span>=<span class="sh-string">'\033[1m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">DIM</span>=<span class="sh-string">'\033[2m'</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">NC</span>=<span class="sh-string">'\033[0m'</span> <span class="sh-comment"># Скинути стиль</span>
+
+<span class="sh-comment"># --- Конфігурація системи ---</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">HOSTNAME</span>=<span class="sh-string">"sp-workstation"</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">VALID_USER</span>=<span class="sh-string">"admin"</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">VALID_PASS</span>=<span class="sh-string">"linux2026"</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">MAX_ATTEMPTS</span>=<span class="sh-number">3</span>
+<span class="sh-keyword">readonly</span> <span class="sh-var">LOCKOUT_TIME</span>=<span class="sh-number">10</span> <span class="sh-comment"># Секунди блокування при вичерпанні спроб</span>
+
+<span class="sh-var">attempts</span>=<span class="sh-number">0</span>
+
+<span class="sh-comment"># --- Функція: Банер входу системи ---</span>
+<span class="sh-builtin">print_banner</span>() {
+    <span class="sh-builtin">clear</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span><span class="sh-var">${BOLD}</span>██████╗ ███╗   ██╗██╗   ██╗    ██╗     ██╗███╗   ██╗██╗   ██╗██╗  ██╗<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>██╔════╝ ████╗  ██║██║   ██║    ██║     ██║████╗  ██║██║   ██║╚██╗██╔╝<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>██║  ███╗██╔██╗ ██║██║   ██║    ██║     ██║██╔██╗ ██║██║   ██║ ╚███╔╝ <span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>██║   ██║██║╚██╗██║██║   ██║    ██║     ██║██║╚██╗██║██║   ██║ ██╔██╗ <span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>╚██████╔╝██║ ╚████║╚██████╔╝    ███████╗██║██║ ╚████║╚██████╔╝██╔╝ ██╗<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span> ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝     ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${DIM}</span>ОС: Ubuntu 24.04 LTS (Noble Numbat) | Ядро: $(uname -r 2>/dev/null || echo '6.8.0-generic')<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${DIM}</span>Хост: <span class="sh-var">${HOSTNAME}</span> | Дата: $(date '+%d.%m.%Y %H:%M:%S')<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${YELLOW}</span>Введіть облікові дані для авторизації:<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+}
+
+<span class="sh-comment"># --- Функція: Блокування при перевищенні ліміту ---</span>
+<span class="sh-builtin">lockout_user</span>() {
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${RED}</span>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${RED}</span>  [БЕЗПЕКА] Перевищено ліміт спроб (<span class="sh-var">${MAX_ATTEMPTS}</span>)! Вхід заблоковано.<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${RED}</span>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<span class="sh-var">${NC}</span>"</span>
+    
+    <span class="sh-keyword">for</span> ((sec=<span class="sh-var">LOCKOUT_TIME</span>; sec>0; sec--)); <span class="sh-keyword">do</span>
+        <span class="sh-builtin">printf</span> <span class="sh-string">"\r  Зачекайте перед повторною спробою: <span class="sh-var">${YELLOW}</span>%02d сек<span class="sh-var">${NC}</span>... "</span> <span class="sh-string">"<span class="sh-var">$sec</span>"</span>
+        <span class="sh-builtin">sleep</span> 1
+    <span class="sh-keyword">done</span>
+    
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"\n\n  <span class="sh-var">${GREEN}</span>Блокування знято. Відновлення форми входу...<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">sleep</span> 1.5
+    <span class="sh-var">attempts</span>=<span class="sh-number">0</span>
+    <span class="sh-builtin">print_banner</span>
+}
+
+<span class="sh-comment"># --- Функція: Успішна авторизація (MOTD) ---</span>
+<span class="sh-builtin">welcome_screen</span>() {
+    <span class="sh-keyword">local</span> <span class="sh-var">user</span>=<span class="sh-string">"<span class="sh-var">$1</span>"</span>
+    <span class="sh-builtin">clear</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${GREEN}</span>=================================================================<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${GREEN}</span><span class="sh-var">${BOLD}</span>  ✓ Авторизація успішна! Ласкаво просимо, <span class="sh-var">${user}</span>.<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"<span class="sh-var">${GREEN}</span>=================================================================<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>Системний статус (MOTD):<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"    • Останній вхід : $(date '+%a %b %d %T %Y') з 127.0.0.1"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"    • Uptime        : $(uptime -p 2>/dev/null || echo 'up 5 days, 12 hours')"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"    • Використання  : Диск 34% (34G/100G) | RAM 2.4G/16G"</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"    • Доступ        : /home/<span class="sh-var">${user}</span> (права: rwx)"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+    <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${DIM}</span>Доступні демо-команди: whoami, pwd, ls, date, clear, exit<span class="sh-var">${NC}</span>"</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+}
+
+<span class="sh-comment"># --- Головний цикл аутентифікації ---</span>
+<span class="sh-builtin">print_banner</span>
+
+<span class="sh-keyword">while</span> <span class="sh-keyword">true</span>; <span class="sh-keyword">do</span>
+    <span class="sh-builtin">printf</span> <span class="sh-string">"  <span class="sh-var">${HOSTNAME}</span> login: "</span>
+    <span class="sh-builtin">read</span> -r <span class="sh-var">input_user</span>
+
+    <span class="sh-comment"># Прапор -s вимикає echo-відображення символів пароля</span>
+    <span class="sh-builtin">printf</span> <span class="sh-string">"  Password: "</span>
+    <span class="sh-builtin">read</span> -rs <span class="sh-var">input_pass</span>
+    <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+
+    <span class="sh-keyword">if</span> [[ <span class="sh-string">"<span class="sh-var">$input_user</span>"</span> == <span class="sh-string">"<span class="sh-var">$VALID_USER</span>"</span> && <span class="sh-string">"<span class="sh-var">$input_pass</span>"</span> == <span class="sh-string">"<span class="sh-var">$VALID_PASS</span>"</span> ]]; <span class="sh-keyword">then</span>
+        <span class="sh-builtin">welcome_screen</span> <span class="sh-string">"<span class="sh-var">$input_user</span>"</span>
+        <span class="sh-keyword">break</span>
+    <span class="sh-keyword">else</span>
+        (( <span class="sh-var">attempts</span>++ ))
+        <span class="sh-keyword">local_remaining</span>=$(( <span class="sh-var">MAX_ATTEMPTS</span> - <span class="sh-var">attempts</span> ))
+        <span class="sh-builtin">echo</span> <span class="sh-string">""</span>
+        <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${RED}</span>Login incorrect. Спроба помилкова.<span class="sh-var">${NC}</span>"</span>
+
+        <span class="sh-keyword">if</span> [[ <span class="sh-var">$attempts</span> -ge <span class="sh-var">$MAX_ATTEMPTS</span> ]]; <span class="sh-keyword">then</span>
+            <span class="sh-builtin">lockout_user</span>
+        <span class="sh-keyword">else</span>
+            <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${YELLOW}</span>Залишилось спроб: <span class="sh-var">${local_remaining}</span> з <span class="sh-var">${MAX_ATTEMPTS}</span><span class="sh-var">${NC}</span>\n"</span>
+        <span class="sh-keyword">fi</span>
+    <span class="sh-keyword">fi</span>
+<span class="sh-keyword">done</span>
+
+<span class="sh-comment"># --- Інтерактивна міні-оболонка після успішного входу ---</span>
+<span class="sh-keyword">while</span> <span class="sh-keyword">true</span>; <span class="sh-keyword">do</span>
+    <span class="sh-builtin">printf</span> <span class="sh-string">"<span class="sh-var">${GREEN}</span><span class="sh-var">${VALID_USER}</span>@<span class="sh-var">${HOSTNAME}</span>:<span class="sh-var">${CYAN}</span>~<span class="sh-var">${NC}</span>$ "</span>
+    <span class="sh-builtin">read</span> -r <span class="sh-var">cmd</span>
+
+    <span class="sh-keyword">case</span> <span class="sh-string">"<span class="sh-var">$cmd</span>"</span> <span class="sh-keyword">in</span>
+        exit|logout)
+            <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>Завершення сеансу. logout.<span class="sh-var">${NC}</span>\n"</span>
+            <span class="sh-builtin">exit</span> 0 ;;
+        whoami)
+            <span class="sh-builtin">echo</span> <span class="sh-string">"  <span class="sh-var">$VALID_USER</span>"</span> ;;
+        pwd)
+            <span class="sh-builtin">echo</span> <span class="sh-string">"  /home/<span class="sh-var">$VALID_USER</span>"</span> ;;
+        ls)
+            <span class="sh-builtin">echo</span> -e <span class="sh-string">"  <span class="sh-var">${CYAN}</span>Desktop  Documents  Downloads  projects  public_html<span class="sh-var">${NC}</span>"</span> ;;
+        date)
+            <span class="sh-builtin">date</span> ;;
+        clear)
+            <span class="sh-builtin">clear</span> ;;
+        <span class="sh-string">""</span>) ;;
+        *)
+            <span class="sh-builtin">echo</span> -e <span class="sh-string">"  bash: <span class="sh-var">$cmd</span>: команда не знайдена (режим симуляції)"</span> ;;
+    <span class="sh-keyword">esac</span>
+<span class="sh-keyword">done</span></pre>
+        </div>
+      </div>
+
+      <!-- TERMINAL DEMO FOR SCRIPT -->
+      <div class="terminal-sim">
+        <div class="terminal-bar">
+          <span class="t-dot r"></span>
+          <span class="t-dot y"></span>
+          <span class="t-dot g"></span>
+          <span class="terminal-title">Виконання: bash login_simulation.sh</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-out">  ██████╗ ███╗   ██╗██╗   ██╗ ██╗     ██╗███╗   ██╗██╗   ██╗██╗  ██╗</span></div>
+          <div><span class="t-out">  ОС: Ubuntu 24.04 LTS | Ядро: 6.8.0-generic | Дата: 26.09.2026 13:25</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-info">  Введіть облікові дані для авторизації:</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-out">  sp-workstation login: </span><span class="t-cmd">admin</span></div>
+          <div><span class="t-out">  Password: </span><span class="t-cmd">********</span></div>
+          <div>&nbsp;</div>
+          <div style="color:#f85149">  Login incorrect. Спроба помилкова.</div>
+          <div style="color:#fbbf24">  Залишилось спроб: 2 з 3</div>
+          <div>&nbsp;</div>
+          <div><span class="t-out">  sp-workstation login: </span><span class="t-cmd">admin</span></div>
+          <div><span class="t-out">  Password: </span><span class="t-cmd">*********</span></div>
+          <div>&nbsp;</div>
+          <div style="color:#22c55e">=================================================================</div>
+          <div style="color:#22c55e;font-weight:700">  ✓ Авторизація успішна! Ласкаво просимо, admin.</div>
+          <div style="color:#22c55e">=================================================================</div>
+          <div>&nbsp;</div>
+          <div><span class="t-info">  Системний статус (MOTD):</span></div>
+          <div><span class="t-out">    • Останній вхід : Sat Sep 26 13:25:10 2026 з 127.0.0.1</span></div>
+          <div><span class="t-out">    • Uptime        : up 5 days, 12 hours</span></div>
+          <div><span class="t-out">    • Використання  : Диск 34% (34G/100G) | RAM 2.4G/16G</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-prompt">admin@sp-workstation:~</span><span class="t-cmd">$ whoami</span></div>
+          <div><span class="t-out">  admin</span></div>
+          <div><span class="t-prompt">admin@sp-workstation:~</span><span class="t-cmd">$ pwd</span></div>
+          <div><span class="t-out">  /home/admin</span></div>
+          <div><span class="t-prompt">admin@sp-workstation:~</span><span class="t-cmd"></span><span class="t-cursor"></span></div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">📌</span>
+        <p>
+          <strong>Як протестувати локально:</strong><br />
+          1. Створіть файл скрипта: <code>nano login_simulation.sh</code><br />
+          2. Додайте права на виконання: <code>chmod +x login_simulation.sh</code><br />
+          3. Запустіть у терміналі: <code>./login_simulation.sh</code><br />
+          <strong>Тестові дані для входу:</strong> логін: <code>admin</code>, пароль: <code>linux2026</code>.
+        </p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SECTION 5: SOURCES -->
+    <section class="section" id="sources">
+      <div class="section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        Джерела та посилання
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Джерела інформації по темі GNU/Linux</h2>
+      <p>
+        Офіційні портали документації, книги, відкриті курси та корисні спільноти для поглибленого вивчення:
+      </p>
+
+      <div class="sources-grid">
+
+        <a href="https://www.kernel.org/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">The Linux Kernel Archives</div>
+            <div class="source-url">kernel.org</div>
+          </div>
+        </a>
+
+        <a href="https://www.gnu.org/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">GNU Operating System</div>
+            <div class="source-url">gnu.org</div>
+          </div>
+        </a>
+
+        <a href="https://ubuntu.com/tutorials" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">Ubuntu Tutorials & Documentation</div>
+            <div class="source-url">ubuntu.com/tutorials</div>
+          </div>
+        </a>
+
+        <a href="https://wiki.archlinux.org/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <polygon points="12 2 2 22 22 22 12 2" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">ArchWiki — Найповніша база знань Linux</div>
+            <div class="source-url">wiki.archlinux.org</div>
+          </div>
+        </a>
+
+        <a href="https://linuxcommand.org/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">The Linux Command Line (Книга)</div>
+            <div class="source-url">linuxcommand.org</div>
+          </div>
+        </a>
+
+        <a href="https://tldp.org/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">The Linux Documentation Project (TLDP)</div>
+            <div class="source-url">tldp.org</div>
+          </div>
+        </a>
+
+        <a href="https://man7.org/linux/man-pages/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">Linux Man-Pages Online</div>
+            <div class="source-url">man7.org/linux/man-pages</div>
+          </div>
+        </a>
+
+        <a href="https://distrowatch.com/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">DistroWatch — Каталог дистрибутивів</div>
+            <div class="source-url">distrowatch.com</div>
+          </div>
+        </a>
+
+        <a href="https://www.reddit.com/r/linux/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">r/linux — Спільнота Reddit</div>
+            <div class="source-url">reddit.com/r/linux</div>
+          </div>
+        </a>
+
+        <a href="https://www.linux.org/forums/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <div>
+            <div class="source-title">Linux.org Forums</div>
+            <div class="source-url">linux.org/forums</div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      Системне програмування · GNU/Linux ·
+      <a href="https://kernel.org" target="_blank" rel="noopener">kernel.org</a>
+      &nbsp;·&nbsp;
+      <a href="index.html">Головна</a>
+      &nbsp;·&nbsp;
+      <a href="git.html">Git</a>
+    </p>
+    <p style="margin-top:0.4rem;font-size:0.75rem;color:var(--text3)">
+      Навчальний проект у рамках курсу «Системне програмування» © 2026
+    </p>
+  </footer>
+
+  <script>
+    // --- ПРОГРЕС-БАР СКРОЛУ ---
+    const progressBar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        progressBar.style.width = (scrollTop / docHeight * 100) + '%';
+      }
+    });
+
+    // --- ПІДСВІЧУВАННЯ АКТИВНОГО РОЗДІЛУ В ЗМІСТІ ---
+    const sections = document.querySelectorAll('.section[id]');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const link = document.querySelector(`.toc-list a[href="#${id}"]`);
+        if (link && entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-64px 0px -55% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
+
+    // --- КОПІЮВАННЯ СКРИПТА ---
+    function copyScript() {
+      const scriptEl = document.getElementById('scriptContent');
+      const text = scriptEl.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '✓ Скопійовано!';
+        btn.style.borderColor = 'var(--green)';
+        btn.style.color = 'var(--green2)';
+        setTimeout(() => {
+          btn.textContent = 'Копіювати код';
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 2200);
+      }).catch(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Помилка';
+        setTimeout(() => btn.textContent = 'Копіювати код', 2000);
+      });
+    }
+
+    // --- ПЛАВНИЙ СКРОЛ ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
